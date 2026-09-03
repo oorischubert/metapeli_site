@@ -133,6 +133,14 @@ body {
 .tactile:active .face { transform: translateY(-1px); }
 .tactile:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
+.tactile.accent .edge { background: #6b2a0c; box-shadow: 0 1px 2px rgba(64,54,40,.22), 0 4px 12px -4px rgba(167,70,27,.45); }
+.tactile.accent .face { background: linear-gradient(180deg, #b8501e, #a7461b); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.22); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .tactile.accent .edge { background: #7a4a33; }
+  :root:not([data-theme="light"]) .tactile.accent .face { background: linear-gradient(180deg, #d68f6f, #ce8564); color: #1e0d04; }
+}
+.keys { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: center; }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
@@ -140,8 +148,13 @@ body {
 </head>
 <body>
   <h1 class="brand">metapeli</h1>
-  <a class="tactile" href="mailto:oorischubert@gmail.com">
-    <span class="edge"></span><span class="face">Contact</span>
-  </a>
+  <div class="keys">
+    <a class="tactile accent" href="app/">
+      <span class="edge"></span><span class="face">Try the demo</span>
+    </a>
+    <a class="tactile" href="mailto:oorischubert@gmail.com">
+      <span class="edge"></span><span class="face">Contact</span>
+    </a>
+  </div>
 </body>
 </html>
