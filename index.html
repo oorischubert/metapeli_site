@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>metapeli</title>
+<link rel="icon" href="images/schuberto32.png" type="image/png">
+<style>
+/* ============================================================
+   Palette — warm paper over Federal Standard 14056, carried
+   over from the metapeli app so the landing page and the product
+   read as one surface. Dark theme lifts the same hue to L=60%.
+   ============================================================ */
+:root {
+  --paper:      #ece6d8;
+  --ink:        #2b2723;
+  --muted:      #6b6455;
+  --accent:     #a7461b;
+  --accent-tint:#ebd0bc;
+
+  --face-top:   #fbf7ec;
+  --face-bot:   #ece5d5;
+  --edge-top:   #cec5ae;
+  --edge-bot:   #b9af98;
+
+  --radius: 12px;
+  --ease:   cubic-bezier(0.23, 1, 0.32, 1);
+
+  /* Paper grain: SVG fractal-noise tile (feTurbulence, baseFrequency .65,
+     numOctaves 3, stitchTiles stitch). A feColorMatrix collapses the noise to
+     a warm speck at luminance-derived alpha and feComponentTransfer scales it,
+     so strength is baked into the tile — no overlay element, no opacity to
+     unpick. The speck is warm rather than black because black grain drags the
+     paper toward gray.
+
+     --grain-base is --paper pre-shifted by however much the specks will move
+     it; grain is additive, so an uncompensated base lands a few points off
+     --paper. Retune it alongside the feFuncA slope. */
+  --grain-size: 220px;
+  --grain-base: #f2ecde;
+  --grain: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='g' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 .33  0 0 0 0 .28  0 0 0 0 .21  .2126 .7152 .0722 0 0'/><feComponentTransfer><feFuncA type='linear' slope='.34' intercept='-.131'/></feComponentTransfer></filter><rect width='300' height='300' filter='url(%23g)'/></svg>");
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:      #21201d;
+    --ink:        #f0ede4;
+    --muted:      #9d968a;
+    --accent:     #ce8564;
+    --accent-tint:#3d281f;
+
+    --face-top:   #37352f;
+    --face-bot:   #2d2b27;
+    --edge-top:   #191816;
+    --edge-bot:   #121110;
+
+    /* Specks flip to a warm white on the dark ground — dark grain over #21201d
+       is invisible — so --grain-base is pre-shifted down here, not up. */
+    --grain-size: 180px;
+    --grain-base: #1b1b18;
+    --grain: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='g' color-interpolation-filters='sRGB'><feTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 .97  0 0 0 0 .92  .2126 .7152 .0722 0 0'/><feComponentTransfer><feFuncA type='linear' slope='.2' intercept='-.075'/></feComponentTransfer></filter><rect width='300' height='300' filter='url(%23g)'/></svg>");
+  }
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  color: var(--ink);
+  font: 15px/1.6 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+
+  background-color: var(--grain-base);
+  background-image: var(--grain);
+  background-size: var(--grain-size) var(--grain-size);
+
+  display: grid; grid-template-rows: 1fr auto; justify-items: center;
+  align-items: center;
+  padding: 24px 24px 40px;
+}
+::selection { background: var(--accent-tint); }
+
+.brand {
+  margin: 0;
+  /* Same face, weight, tracking and case as the app header — scaled up from
+     26px to fill the page. */
+  font-family: ui-serif, Georgia, "Times New Roman", serif;
+  font-size: clamp(56px, 17vw, 168px);
+  font-weight: 400;
+  letter-spacing: -.02em;
+  line-height: 1.05;
+  text-transform: lowercase;
+  color: var(--accent);
+}
+
+/* ============================================================
+   Tactile button — shaped face, firm edge, compressible depth.
+   The face rides 3px above the edge and sinks to 1px on press.
+   Same recipe as the app's header/popup keys.
+   ============================================================ */
+.tactile {
+  position: relative; display: inline-block;
+  border: 0; padding: 0; background: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font: inherit;
+  text-decoration: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.tactile .edge {
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, var(--edge-top), var(--edge-bot));
+  box-shadow: 0 1px 2px rgba(64,54,40,.22);
+}
+.tactile .face {
+  position: relative;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 8px 15px;
+  border-radius: inherit;
+  background: linear-gradient(180deg, var(--face-top), var(--face-bot));
+  color: var(--ink);
+  font-size: 13.5px; font-weight: 550; letter-spacing: -.005em;
+  transform: translateY(-3px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6);
+  transition: transform 110ms var(--ease), background 140ms;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .tactile .face { box-shadow: inset 0 1px 0 rgba(255,255,255,.07); }
+}
+.tactile:hover .face { transform: translateY(-4px); }
+.tactile:active .face { transform: translateY(-1px); }
+.tactile:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+</style>
+</head>
+<body>
+  <h1 class="brand">metapeli</h1>
+  <a class="tactile" href="mailto:oorischubert@gmail.com">
+    <span class="edge"></span><span class="face">Contact</span>
+  </a>
+</body>
+</html>
